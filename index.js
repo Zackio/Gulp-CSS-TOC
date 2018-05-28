@@ -1,5 +1,6 @@
 'use strict';
 var gutil = require('gulp-util');
+// through2 is a thin wrapper around node transform streams
 var through = require('through2');
 
 module.exports = function gulpToc(options) {
@@ -21,6 +22,7 @@ module.exports = function gulpToc(options) {
 		// Gets array of heades from css file contents
 		var array_of_css_header_blocks = str.match(re);
 
+		// Removes opening and end of comment syntax for each item, relacing with a dash at the beginning
 		array_of_css_header_blocks.forEach(function(entry) {
 			entry = entry.replace('== */', '');
 			entry = entry.replace('/* ', '- ');
@@ -32,6 +34,8 @@ module.exports = function gulpToc(options) {
 		if (file.isStream()) {
 			console.log('is stream');
 		}
+
+		 // Prepend TOC to beginning of given file
 		file.contents = Buffer.concat([
 			new Buffer(data, 'utf8'),
 			file.contents

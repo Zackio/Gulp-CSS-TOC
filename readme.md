@@ -1,12 +1,11 @@
-# gulp-<%= pluginName %> [![Build Status](https://travis-ci.org/<%= githubUsername %>/gulp-<%= pluginName %>.svg?branch=master)](https://travis-ci.org/<%= githubUsername %>/gulp-<%= pluginName %>)
+# gulp-css-toc
 
-> My <%= superb %> gulp plugin
-
+Appends a TOC to the beginning of a CSS file. The header must be formatted as given below.
 
 ## Install
 
 ```
-$ npm install --save-dev gulp-<%= pluginName %>
+$ npm install --save-dev gulp-css-toc
 ```
 
 
@@ -14,30 +13,33 @@ $ npm install --save-dev gulp-<%= pluginName %>
 
 ```js
 var gulp = require('gulp');
-var <%= camelPluginName %> = require('gulp-<%= pluginName %>');
+var gulpCssToc = require('gulp-css-toc');
 
 gulp.task('default', function () {
-	return gulp.src('src/file.ext')
-		.pipe(<%= camelPluginName %>())
+	return gulp.src('src/style.css')
+		.pipe(gulpCssToc())
 		.pipe(gulp.dest('dist'));
 });
 ```
 
+## Input
 
-## API
+Headings must be styled as so:
 
-### <%= camelPluginName %>(options)
+```css
+/* ===================================================== */
+/* Header Styles                                         */
+/* ===================================================== */
+```
 
-#### options
+## Output
 
-##### foo
+Appended to the beginning of the file will be as so:
 
-Type: `boolean`  
-Default: `false`
-
-Lorem ipsum.
-
-
-## License
-
-MIT © [<%= name %>](<%= website %>)
+```css
+/*
+- Header Styles
+- Body Styles
+- Footer Styles
+*/
+```

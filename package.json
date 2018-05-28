@@ -25,6 +25,8 @@
     "through2": "^0.6.5"
   },
   "devDependencies": {
-    "mocha": "*"
+    "mocha": "*",
+    "should": "*",
+    "event-stream": "*"
   }
 }

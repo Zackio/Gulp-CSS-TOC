@@ -1,13 +1,12 @@
 {
-  "name": "gulp-<%= pluginName %>",
+  "name": "gulp-css-toc",
   "version": "0.0.0",
-  "description": "My <%= superb %> gulp plugin",
+  "description": "Adds a TOC to the beginning of a stylesheet, taken from header comment blocks.",
   "license": "MIT",
-  "repository": "<%= githubUsername %>/gulp-<%= pluginName %>",
+  "repository": "zackio/gulp-css-toc",
   "author": {
-    "name": "<%= name %>",
-    "email": "<%= email %>",
-    "url": "<%= humanizedWebsite %>"
+    "name": "Zackary Allnutt",
+    "url": "http://zackallnutt.co.uk"
   },
   "engines": {
     "node": ">=0.10.0"

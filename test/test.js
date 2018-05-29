@@ -26,87 +26,51 @@ describe('gulp-html-toc', function() {
     return read(path.resolve(__dirname, 'expected', name + '.css'));
   }
 
-  it('should emit error on streamed file', function (done) {
-      gulp.src(fixtures('*'), { buffer: false })
-        .pipe(concat('test.js'))
-        .once('error', function (err) {
-          err.message.should.eql('gulp-concat: Streaming not supported');
-          done();
-        });
+  var fixtures = function (glob) { return path.join(__dirname, 'fixtures', glob); }
+
+  it('should emmit error on passed stream',  function( done ) {
+    gulp.src(__dirname + "/fixtures/style.css", { buffer: false })
+    .pipe(gulpCssToc())
+    .once('error', function (err) {
+      assert.equal(err, 'Error: gulp-toc-css: Streaming not supported');
+      done();
     });
-
-  it('output from fixture should match expected file in buffer mode',  function(cb) {
-    var stream = gulpCssToc();
-    var buffer = [];
-    var filepath = fixture_file('style');
-
-    stream.write(new Vinyl({
-      base: __dirname,
-      path: filepath,
-      contents: fs.readFileSync(filepath)
-    }));
-
-    stream.on('data', function(file) {
-      assert(file.isBuffer());
-      buffer.push(file);
-    });
-
-    stream.on('end', function() {
-      assert.equal(buffer.length, 1);
-      assert.equal(buffer[0].contents.toString(), expected_file('style'));
-      cb();
-    });
-
-    stream.end();
-
   });
 
-  it('should work in stream mode', function(done) {
-         var stream = gulpCssToc();
+  it('should output buffer',  function( done ) {
+    gulp.src(__dirname + "/fixtures/style.css", { buffer: true })
+    .pipe(gulpCssToc())
+    .once('data', function (file) {
+      assert(file.isBuffer());
+      done();
+    })
+  });
 
-         var filepath = fixture_file('style');
-
-         fixture_file = new Vinyl({
-           base: __dirname,
-           path: filepath,
-           contents: fs.readFileSync(filepath)
-         });
-
-         // console.log(fixture_file);
-         // assert(fs.existsSync(fixture_file)).to.be.true
-
-          // stream.write( fixture_file );
-
-          stream.write(new Vinyl({
-            base: __dirname,
-            path: filepath,
-            contents: fs.readFileSync(filepath)
-          }));
-
-          stream.once('data', function(file){
-             assert(file.isStream());
-             // assert(file.isBuffer());
-             done();
-          });
-
-     });
+  it('output from fixture should match expected file in buffer mode',  function(done) {
+    gulp.src(__dirname + "/fixtures/style.css", { buffer: true })
+    .pipe(gulpCssToc())
+    .once('data', function(file) {
+      assert.equal(file.contents.toString(), expected_file('style'));
+      done();
+    });
+  });
 
   it('should let null files pass through', function(done) {
-      var stream = gulpCssToc(),
-          n = 0;
-      stream.pipe(es.through(function(file) {
-          assert.equal(file.path, 'null.css');
-          assert.equal(file.contents,  null);
-          n++;
-      }, function() {
-          assert.equal(n, 1);
-          done();
-      }));
-      stream.write(new gutil.File({
-          path: 'null.css',
-          contents: null
-      }));
-      stream.end();
+    var stream = gulpCssToc(),
+    n = 0;
+    stream.pipe(es.through(function(file) {
+      assert.equal(file.path, 'null.css');
+      assert.equal(file.contents,  null);
+      n++;
+    }, function() {
+      assert.equal(n, 1);
+      done();
+    }));
+    stream.write(new gutil.File({
+      path: 'null.css',
+      contents: null
+    }));
+    stream.end();
   });
 
 });

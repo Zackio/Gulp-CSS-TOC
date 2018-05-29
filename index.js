@@ -3,15 +3,22 @@ var gutil = require('gulp-util');
 // through2 is a thin wrapper around node transform streams
 var through = require('through2');
 
-module.exports = function gulpToc(options) {
+function gulpTocCss(options) {
 
-	return through.obj(function(file, enc, cb) {
-
-		// Check for file
+	 var stream = through.obj(function(file, enc, cb) {
+		 
+		// Pass null files back
 		if (file.isNull()) {
 			cb(null, file);
 			return;
 		}
+
+		// we don't do streams (yet)
+	  if (file.isStream()) {
+	     this.emit('error', new Error('gulp-toc-css: Streaming not supported'));
+	     cb();
+	     return;
+	   }
 
 		var re = /== \*\/\n\/\*\s+([aA-zZ0-9 ]+\b)/g;
 
@@ -31,18 +38,26 @@ module.exports = function gulpToc(options) {
 
 		data += "\n*/\n\n"; // Close Comment
 
-		if (file.isStream()) {
-			console.log('is stream');
-		}
+		// Check file is buffer
+		if (file.isBuffer()) {
+			// Prepend TOC to beginning of given file
+		 file.contents = Buffer.concat([
+			 new Buffer(data, 'utf8'),
+			 file.contents
+		 ]);
+	 }
 
-		 // Prepend TOC to beginning of given file
-		file.contents = Buffer.concat([
-			new Buffer(data, 'utf8'),
-			file.contents
-		]);
-
+		// make sure the file goes through the next gulp plugin
 		this.push(file);
-		cb();
 
-	});
-};
+		// tell the stream engine that we are done with this file
+		cb();
+});
+
+	// returning the file stream
+	return stream;
+
+}
+
+// exporting the plugin main function
+module.exports = gulpTocCss;
